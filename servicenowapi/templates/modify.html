@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工单更新系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            z-index: 2;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background-color: #fff;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            margin-top: 10px;
+        }
+        
+        button[type="submit"]:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .ticket-info {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .ticket-info h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+        
+        .urgency-high {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        .urgency-medium {
+            color: #f39c12;
+            font-weight: 600;
+        }
+        
+        .urgency-low {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-open {
+            background-color: #e8f4fd;
+            color: #3498db;
+        }
+        
+        .status-in-progress {
+            background-color: #fef9e7;
+            color: #f39c12;
+        }
+        
+        .status-resolved {
+            background-color: #eafaf1;
+            color: #27ae60;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .ticket-info {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2><i class="fas fa-ticket-alt"></i> 工单更新系统</h2>
+        </div>
+        <form id="update-form" method="post">
+        <div class="form-container">
+            <div id="message-container"></div>
+                <div class="form-group">
+                    <label for="ticket-number">请输入工单单号</label>
+                    <div class="input-icon">
+                    <i class="fas fa-hashtag"></i>
+                    <input type="text" id="ticket-number" name="ticket-number" placeholder="输入工单号" required 
+                    `        value={% if tkno %}
+                                {{tkno}}
+                                {% endif %}  >
+                    </div>
+                    <button id="fetch-btn" name="button-modify"    class="btn btn-primary" type="submit" style="margin-top: 10px; width: 100%" value="findticket">
+                        <i class="fas fa-search"></i> 查询工单信息
+                    </button>
+                </div>
+            <div id="ticket-details" class="hidden">
+                <div class="ticket-info">
+                    <h3><i class="fas fa-info-circle"></i> 工单信息</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">单号</div>
+                            <div class="info-value" id="ticket-id">
+                                {% if tkno %}
+                                {{tkno}}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">状态</div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-question-circle"></i>
+                                <select id="state" name="state">
+                                <option value="New" {% if tkstate == "New" %}selected{% endif %}>New</option>
+                                <option value="In Progress" {% if tkstate == "In Progress" %}selected{% endif %}>In Progress</option>
+                                <option value="On Hold" {% if tkstate == 'On Hold' %}selected{% endif %}>On Hold</option>
+                                <option value="Resolved" {% if tkstate == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                <option value="Closed" {% if tkstate == 'Closed' %}selected{% endif %}>Closed</option>
+                                <option value="Canceled" {% if tkstate == 'Canceled' %}selected{% endif %}>Canceled</option>
+                                </select>
+                                </div>
+                                </div>
+                            <!-- <div class="info-value"><span class="status-indicator status-open" id="ticket-status">
+                                {% if tkstate %}
+                                {{tkstate}}
+                                {% endif %}
+                            </span></div> -->
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-label">紧急程度</div>
+                            <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                <select id="urgency" name="urgency">
+                                <option value="1 - High" {% if tkurgency == "1 - High" %}selected{% endif %}>1 - High</option>
+                                <option value="2 - Medium" {% if tkurgency == "2 - Medium" %}selected{% endif %}>2 - Medium</option>
+                                <option value="3 - Low" {% if tkurgency == '3 - Low' %}selected{% endif %}>3 - Low</option>
+                                </select>
+                                </div>
+                                </div>
+                            <!-- <div class="info-value">
+                                <span id="ticket-urgency">
+                                    {% if tkurgency %}
+                                    {{tkurgency}}
+                                    {% endif %}
+                                </span>
+                            </div> -->
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">详细信息</div>
+                            <div class="info-value">
+                                <span id="information">
+                                    {% if tkdescription %}
+                                    {{tkdescription}}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                    <!-- <div class="form-group">
+                        <label for="state">状态</label>
+                        <div class="input-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <select id="state" name="state">
+                                <option value="1">In Progress</option>
+                                <option value="2">On Hold</option>
+                                <option value="3">Resolved</option>
+                                <option value="4">Canceled</option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="form-group">
+                        <label for="worknotes">工作日志</label>
+                        <div class="input-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                            <textarea id="worknotes" name="worknotes" placeholder="添加新的工作记录..."></textarea>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #7f8c8d; margin-top: 5px;">
+                            <i class="fas fa-info-circle"></i> 此内容将附加到现有工作日志中
+                        </div>
+                    </div>
+                    
+                    <button type="submit" name="button-modify" class="btn btn-primary" value="update">
+                        <i class="fas fa-paper-plane"></i> 提交更新
+                    </button>
+                </form>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/find" class="btn btn-secondary">
+                    <i class="fas fa-search"></i> 查询其他工单
+                </a>
+                <a href="/create" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> 返回主页
+                </a>
+            </div>
+        </div>
+                
+        <div class="footer">
+            <p>© 2023 工单管理系统 | 技术支持热线: 400-123-4567</p>
+        </div>
+    </div>
+
+    
+</body>
+</html>

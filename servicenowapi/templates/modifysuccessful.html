@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改成功</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 20px;
+        }
+        
+        .success-container {
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #2ecc71;
+            margin-bottom: 25px;
+            animation: bounce 1s ease;
+        }
+        
+        .success-title {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .ticket-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .ticket-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e74c3c;
+            letter-spacing: 1px;
+        }
+        
+        .action-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5);
+        }
+        
+        .back-home {
+            margin-top: 25px;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+        }
+        
+        .back-home a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .back-home a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+        
+        @media (max-width: 500px) {
+            .success-container {
+                padding: 40px 25px;
+            }
+            
+            .success-icon {
+                font-size: 4rem;
+            }
+            
+            .success-title {
+                font-size: 1.8rem;
+            }
+            
+            .ticket-number {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h1 class="success-title">修改成功</h1>
+        
+        <p class="success-message">您选择的项目已成功修改</p>
+        
+        <div class="ticket-info">
+            <p>已修改单号</p>
+            <div class="ticket-number">
+                {% if tkno %}
+                 {{tkno}}
+                {% endif %}
+            
+            </div>
+        </div>
+        
+        <button class="action-btn" onclick="window.location.href='/modify'">
+            <i class="fas fa-check"></i> 确定
+        </button>
+        
+        <p class="back-home">
+            <a href="/create"><i class="fas fa-arrow-left"></i> 返回首页</a>
+        </p>
+    </div>
+    
+</html>
