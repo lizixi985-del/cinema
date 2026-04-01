@@ -1,4 +1,4 @@
-from  servicenowapi import create_app
+from  cinema_page import create_app
 app =create_app()
 
 if __name__ == '__main__':

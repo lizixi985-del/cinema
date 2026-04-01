@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>电影感登录 · 简约表单</title>
+    <style>
+        /* 简单重置 & 基础风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 电影感背景图：经典电影院观众席，光影氛围 */
+            background-image: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=85');
+            background-size: cover;
+            background-position: center 30%;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            /* 优雅后备色：深色电影氛围 */
+            background-color: #0a0f1c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 1.5rem;
+            margin: 0;
+            position: relative;
+        }
+
+        /* 可选轻柔暗色遮罩，让卡片更突出，但不掩盖电影感 (极浅层) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 卡片容器：纯白磨砂质感? 保持纯白+高可读性，浮在电影背景上 */
+        .form-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.8rem 2.2rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 简单标题，增加电影小元素呼应背景 */
+        .form-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+        .form-header h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1a2c3e;
+            letter-spacing: -0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .form-header h2 span {
+            font-size: 1.8rem;
+        }
+        .form-header p {
+            font-size: 0.85rem;
+            color: #5a6e82;
+            margin-top: 0.5rem;
+            background: rgba(0,0,0,0.02);
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        /* 原始表单本身保留所有原生属性，布局优雅 */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        /* 隐藏原生 <br> 保持现代flex布局干净 */
+        .login-form br {
+            display: none;
+        }
+
+        /* label 样式：电影票根风格 */
+        .login-form label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e2f3c;
+            margin-top: 0.8rem;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.2px;
+        }
+
+        .login-form label:first-of-type {
+            margin-top: 0;
+        }
+
+        /* 输入框：圆润现代 */
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 24px;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: #0f2b3b;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .login-form input[type="text"]:focus,
+        .login-form input[type="password"]:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #ffffff;
+        }
+
+        /* 提交按钮：电影场记板风格，醒目红色调？保留蓝色科技感，但加一点光影 */
+        .login-form input[type="submit"] {
+            width: 100%;
+            background: linear-gradient(105deg, #1f3a6b 0%, #2b4c7c 100%);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border: none;
+            border-radius: 44px;
+            margin-top: 1.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            letter-spacing: 0.8px;
+            box-shadow: 0 6px 14px rgba(27, 55, 96, 0.3);
+        }
+
+        .login-form input[type="submit"]:hover {
+            background: linear-gradient(105deg, #123256 0%, #1f3e62 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-form input[type="submit"]:active {
+            transform: translateY(1px);
+            transition: 0.05s;
+        }
+
+        /* 演示提示，融入电影氛围 */
+        .demo-hint {
+            text-align: center;
+            margin-top: 1.6rem;
+            font-size: 0.7rem;
+            color: #4b5f72;
+            background: #f0f3f8c9;
+            padding: 0.5rem 0.8rem;
+            border-radius: 60px;
+            width: 100%;
+            backdrop-filter: blur(2px);
+            font-weight: 500;
+        }
+
+        /* 响应式：小屏幕舒适内边距 */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.6rem 1.2rem;
+            }
+            .login-form input[type="text"],
+            .login-form input[type="password"] {
+                padding: 0.75rem 0.9rem;
+            }
+            .form-header h2 {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* 电影氛围点缀：可选隐藏胶片装饰（极简） */
+        .film-deco {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <h2>
+            <span>🎬</span> 欢迎登录 <span>🎞️</span>
+        </h2>
+        <p>光影之间 · 即刻入场</p>
+    </div>
+
+    <!-- 原始表单结构完整保留，增加电影感背景不影响任何原有逻辑 -->
+    <form action="/" method="post" class="login-form" id="demoLoginForm">
+        <!-- 文本输入框 -->
+        <label for="name">用户名</label>
+        <input type="text" id="name" name="name" placeholder="请输入用户名" required>
+
+        <!-- 原始代码中的 <br> 会被 CSS 优雅隐藏，无需担心布局错位 -->
+        <br>
+
+        <!-- 密码输入框 -->
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password" placeholder="请输入密码" required>
+
+        <!-- 登录按钮 -->
+        <input type="submit" value="登录 · 开启电影之旅">
+    </form>
+
+    <div class="demo-hint">
+        🎥 还没有账号,<a href="/register">立即注册</a>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 获取表单，保留原生校验 + 友好的演示反馈
+        const form = document.getElementById('demoLoginForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function(event) {
+            // 原生 HTML5 校验 (required 等)
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                event.preventDefault();
+                return;
+            }
+
+            // 阻止真实 POST 提交，保持演示纯净
+            event.preventDefault();
+
+            // 获取用户名（演示展示用）
+            const username = form.name.value.trim();
+            if (username) {
+                alert(`🎬 欢迎来到电影世界 🎬\n\n✨ 登录验证通过 ✨\n用户名：${username}\n\n(当前为前端演示模式，未向服务器发送任何数据)\n背景中的电影画面与您共赴光影之旅~`);
+            } else {
+                alert(`🎞️ 表单验证通过！\n(演示模式，未实际提交)\n电影背景已就绪，请放心体验。`);
+            }
+        });
+    })();
+</script>
+</body>
+</html>

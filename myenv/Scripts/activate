@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\ZiXiTSLi\Documents\GitHub\AI-First-AMS\myenv"
+VIRTUAL_ENV="C:\Users\ZiXiTSLi\Documents\GitHub\cinema\myenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

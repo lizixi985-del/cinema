@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>电影感注册 · 完善资料</title>
+    <style>
+        /* 简单重置 & 基础风格 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* 电影感背景图：经典电影院观众席，光影氛围 */
+            background-image: url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=85');
+            background-size: cover;
+            background-position: center 30%;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            /* 优雅后备色：深色电影氛围 */
+            background-color: #0a0f1c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 1.5rem;
+            margin: 0;
+            position: relative;
+        }
+
+        /* 可选轻柔暗色遮罩，让卡片更突出，但不掩盖电影感 (极浅层) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 卡片容器：纯白磨砂质感? 保持纯白+高可读性，浮在电影背景上 */
+        .form-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem 1.8rem 2.2rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 简单标题，增加电影小元素呼应背景 */
+        .form-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .form-header h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #1a2c3e;
+            letter-spacing: -0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .form-header h2 span {
+            font-size: 1.8rem;
+        }
+        .form-header p {
+            font-size: 0.85rem;
+            color: #5a6e82;
+            margin-top: 0.5rem;
+            background: rgba(0,0,0,0.02);
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        /* 原始表单本身保留所有原生属性，布局优雅 */
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        /* 隐藏原生 <br> 保持现代flex布局干净 */
+        .register-form br {
+            display: none;
+        }
+
+        /* label 样式：电影票根风格 */
+        .register-form label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e2f3c;
+            margin-top: 0.8rem;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.2px;
+        }
+
+        .register-form label:first-of-type {
+            margin-top: 0;
+        }
+
+        /* 输入框：圆润现代 */
+        .register-form input[type="text"],
+        .register-form input[type="password"],
+        .register-form input[type="email"],
+        .register-form input[type="number"] {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 24px;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: #0f2b3b;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .register-form input[type="text"]:focus,
+        .register-form input[type="password"]:focus,
+        .register-form input[type="email"]:focus,
+        .register-form input[type="number"]:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #ffffff;
+        }
+
+        /* 性别单选组 - 修复为同一行水平布局，去掉其他选项，只保留男/女 */
+        .gender-group {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            align-items: center;
+            background: #f9fbfd;
+            padding: 0.65rem 1rem;
+            border-radius: 28px;
+            border: 1.5px solid #e2e8f0;
+            margin-top: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .gender-group:hover {
+            border-color: #cbd5e1;
+        }
+        .gender-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            font-size: 0.98rem;
+            font-weight: 500;
+            color: #1e2f3c;
+            margin: 0;
+            padding: 0;
+        }
+        .gender-option input[type="radio"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
+            accent-color: #2b4c7c;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .gender-option span {
+            user-select: none;
+            line-height: 1.2;
+        }
+
+        /* 年龄辅助说明 */
+        .age-hint {
+            font-size: 0.7rem;
+            color: #6c7f92;
+            margin-top: 0.3rem;
+            margin-left: 0.5rem;
+        }
+
+        /* 提交按钮：电影场记板风格 */
+        .register-form input[type="submit"] {
+            width: 100%;
+            background: linear-gradient(105deg, #1f3a6b 0%, #2b4c7c 100%);
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            border: none;
+            border-radius: 44px;
+            margin-top: 1.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            letter-spacing: 0.8px;
+            box-shadow: 0 6px 14px rgba(27, 55, 96, 0.3);
+        }
+
+        .register-form input[type="submit"]:hover {
+            background: linear-gradient(105deg, #123256 0%, #1f3e62 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0, 0, 0, 0.2);
+        }
+
+        .register-form input[type="submit"]:active {
+            transform: translateY(1px);
+            transition: 0.05s;
+        }
+
+        /* 演示提示，融入电影氛围 */
+        .demo-hint {
+            text-align: center;
+            margin-top: 1.6rem;
+            font-size: 0.7rem;
+            color: #4b5f72;
+            background: #f0f3f8c9;
+            padding: 0.5rem 0.8rem;
+            border-radius: 60px;
+            width: 100%;
+            backdrop-filter: blur(2px);
+            font-weight: 500;
+        }
+
+        /* 响应式：小屏幕舒适内边距，性别组在小屏下仍保持一行 */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 1.6rem 1.2rem;
+            }
+            .register-form input[type="text"],
+            .register-form input[type="password"],
+            .register-form input[type="email"],
+            .register-form input[type="number"] {
+                padding: 0.75rem 0.9rem;
+            }
+            .form-header h2 {
+                font-size: 1.6rem;
+            }
+            .gender-group {
+                gap: 1.5rem;
+                padding: 0.55rem 0.9rem;
+            }
+            .gender-option {
+                gap: 0.45rem;
+                font-size: 0.92rem;
+            }
+        }
+
+        /* 超小屏保障不换行 */
+        @media (max-width: 360px) {
+            .gender-group {
+                gap: 1rem;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <h2>
+            <span>🎬</span> 注册账号 <span>🎞️</span>
+        </h2>
+        <p>加入光影世界 · 完善个人资料</p>
+    </div>
+
+    
+    <form action="/Register" method="post" class="register-form" id="RegisterForm">
+        <!-- 用户名 -->
+        <label for="name">用户名</label>
+        <input type="text" id="name" name="name" placeholder="请输入用户名" required>
+
+        <br>
+
+        <!-- 电子邮箱 -->
+        <label for="email">电子邮箱</label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+
+        <br>
+
+        <!-- 密码 -->
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password" placeholder="请设置密码（至少6位）" required>
+
+        <br>
+
+        <!-- 确认密码 -->
+        <label for="confirm_password">确认密码</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="请再次输入密码" required>
+
+        <br>
+
+        <!-- 性别：只保留男/女 -->
+        <label>性别</label>
+        <div class="gender-group">
+            <label class="gender-option">
+                <input type="radio" name="gender" value="男" checked> <span>男</span>
+            </label>
+            <label class="gender-option">
+                <input type="radio" name="gender" value="女"> <span>女</span>
+            </label>
+        </div>
+
+        <!-- 年龄字段：数字输入，min=1，max=120 且在前端验证时做友好提示 -->
+        <label for="age">年龄</label>
+        <input type="number" id="age" name="age" placeholder="请输入年龄 (1-120)" min="1" max="120" step="1" required>
+        <div class="age-hint">🎭 真实年龄有助于推荐更合适的电影内容</div>
+
+        <!-- 提交按钮 - 注册动作 -->
+        <input type="submit" value="注册 · 开启电影之旅">
+    </form>
+
+    <div class="demo-hint">
+        🎥 电影背景 · 演示模式 | 性别已优化为一行显示(男/女)，年龄范围1-120岁
+    </div>
+</div>
+
+<script>
+    (function() {
+        const form = document.getElementById('RegisterForm');
+        if (!form) return;
+
+        form.addEventListener('submit', function(event) {
+            // 1. 密码一致性校验
+            const password = form.password.value;
+            const confirmPwd = form.confirm_password.value;
+            if (password !== confirmPwd) {
+                event.preventDefault();
+                alert('🎬 提示 🎬\n\n两次输入的密码不一致，请重新输入。\n保持密码一致后才能完成注册。');
+                form.confirm_password.focus();
+                return;
+            }
+
+            // 2. 密码长度至少6位 (增加安全性)
+            if (password.length < 6) {
+                event.preventDefault();
+                alert('🎞️ 安全提示 🎞️\n\n密码长度至少为6个字符，为了账号安全请设置复杂一点吧~');
+                form.password.focus();
+                return;
+            }
+            
+
+            // 3. 年龄有效性校验 (number 输入框虽然自带范围，但为了演示更友好手动校验)
+            const ageInput = form.age;
+            let ageValue = ageInput.value.trim();
+            if (ageValue === "") {
+                event.preventDefault();
+                alert('🎭 年龄不能为空，请填写您的真实年龄 (1-120岁)');
+                ageInput.focus();
+                return;
+            }
+            let ageNum = Number(ageValue);
+            if (isNaN(ageNum) || !Number.isInteger(ageNum) || ageNum < 1 || ageNum > 120) {
+                event.preventDefault();
+                alert('🎭 请输入有效的年龄 (1~120之间的整数)');
+                ageInput.value = '';
+                ageInput.focus();
+                return;
+            }
+
+            // 4. 性别获取 (只保留男/女，默认必选其一，不存在未选情况)
+            const selectedGender = document.querySelector('input[name="gender"]:checked');
+            const genderValue = selectedGender ? selectedGender.value : '未选择';
+            //邮箱判断
+            // Simplified email validation
+            const email = form.email.value;
+            const hasAtSymbol = email.includes('@');
+            const hasDotAfterAt = email.indexOf('.', email.indexOf('@')) > email.indexOf('@') + 1;
+            const notEmpty = email.length > 0;
+
+            if (!hasAtSymbol || !hasDotAfterAt || email.startsWith('@') || email.endsWith('.')) 
+            {
+                event.preventDefault();
+                alert('邮箱格式提示 📧\n\n请输入正确的邮箱格式，例如：example@domain.com');
+                form.email.focus();
+                return;
+            }
+                
+            // 5. 原生表单验证 (email格式, required等)
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                event.preventDefault();
+                return;
+            }
+
+            // 阻止真实 POST 提交,演示纯净
+            //event.preventDefault();
+
+            // 获取用户填写的信息用于演示弹窗
+            // const username = form.name.value.trim();
+            // const email = form.email.value.trim();
+            
+            // 组装友好的提示信息
+            //alert(`🎉 欢迎加入光影世界 🎉\n\n✨ 注册信息已完善 ✨\n用户名：${username}\n邮箱：${email}\n性别：${genderValue}\n年龄：${ageNum} 岁\n\n(当前为前端演示模式，未向服务器发送任何数据)\n背景中的电影画面与您共赴精彩旅程~`);
+            /*const formData = $(this).serialize()
+            $.ajax({
+                url: '/register',      // 请求发送到的服务器地址
+                type: 'POST',          // 使用 POST 方法提交数据
+                data: formData,        // 上面序列化好的表单数据
+                success: function (response) {
+                    if (response.code === 200){
+                        alert(response.msg)        // 弹出成功消息
+                        window.location.href = '/'; // 跳转到首页
+                    }else {
+                        alert(response.msg)        // 弹出错误消息（如用户名已存在）
+                    }
+                },
+                error: function (xhr) {
+                    alert('服务器错误: '+ (xhr.responseJSON?.msg || '请稍后再试一下'))
+                }
+            )}*/
+            const formData = new FormData(form);
+            fetch('/Register', {  // 根据你的 Flask 路由修改路径
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    alert('🎉 ' + data.msg + ' 🎉\n\n即将跳转到登录页面...');
+                    // 注册成功后跳转
+                    window.location.href = '/login';  // 或 '/login'
+                } else {
+                    alert('⚠️ ' + data.msg + ' ⚠️');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('网络错误，请稍后再试');
+            });
+
+
+
+
+
+
+            
+        });
+    })();
+</script>
+</body>
+</html>
