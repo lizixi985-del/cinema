@@ -208,7 +208,7 @@
     </div>
 
     <!-- 原始表单结构完整保留，增加电影感背景不影响任何原有逻辑 -->
-    <form action="/" method="post" class="login-form" id="demoLoginForm">
+    <form action="/login" method="post" class="login-form" id="LoginForm">
         <!-- 文本输入框 -->
         <label for="name">用户名</label>
         <input type="text" id="name" name="name" placeholder="请输入用户名" required>
@@ -225,14 +225,14 @@
     </form>
 
     <div class="demo-hint">
-        🎥 还没有账号,<a href="/register">立即注册</a>
+        🎥 还没有账号,🎟️<a href="/register">立即注册</a>
     </div>
 </div>
 
 <script>
     (function() {
         // 获取表单，保留原生校验 + 友好的演示反馈
-        const form = document.getElementById('demoLoginForm');
+        const form = document.getElementById('LoginForm');
         if (!form) return;
 
         form.addEventListener('submit', function(event) {
@@ -244,15 +244,44 @@
             }
 
             // 阻止真实 POST 提交，保持演示纯净
-            event.preventDefault();
+            //event.preventDefault();
 
             // 获取用户名（演示展示用）
-            const username = form.name.value.trim();
+            /*const username = form.name.value.trim();
             if (username) {
                 alert(`🎬 欢迎来到电影世界 🎬\n\n✨ 登录验证通过 ✨\n用户名：${username}\n\n(当前为前端演示模式，未向服务器发送任何数据)\n背景中的电影画面与您共赴光影之旅~`);
             } else {
                 alert(`🎞️ 表单验证通过！\n(演示模式，未实际提交)\n电影背景已就绪，请放心体验。`);
-            }
+            }*/
+            const username = form.name.value.trim();
+            const formData = new FormData(form);
+            fetch('/login', {  // 根据你的 Flask 路由修改路径
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    alert('🎉 ' + data.msg + ' 🎉\n\n即将跳转到首页...');
+                    // 注册成功后跳转
+                    window.location.href = '/login';  // 或 '/login'
+                } else {
+                    alert('⚠️ ' + data.msg + ' ⚠️');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('网络错误，请稍后再试');
+            });
+
+
+
+
+
+
+
+
+
         });
     })();
 </script>
