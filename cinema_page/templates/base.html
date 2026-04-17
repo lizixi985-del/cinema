@@ -350,7 +350,14 @@
             <span>MOVIE</span>
         </div>
         <div class="user-avatar">
-            <img src="https://picsum.photos/200/200?random=1" alt="用户头像">
+            <button class="avatar-btn">
+                <img src="用户头像地址" alt="用户头像">
+            </button>
+            <!-- 下拉菜单（默认隐藏） -->
+            <<div class="dropdown-menu">
+                <a href="{{ url_for('create.profile') }}">修改个人信息</a>
+                <a>退出登录</a>
+            </div>
         </div>
     </header>
 
@@ -360,11 +367,11 @@
         <aside class="sidebar">
             <div class="nav-item active">
                 <span class="nav-icon">🏠</span>
-                <a href = "Homepage" style="text-decoration:none; color:inherit;">首页</a>
+                <a href = "{{ url_for('create.Homepage') }}" style="text-decoration:none; color:inherit;">首页</a>
             </div>
             <div class="nav-item">
                 <span class="nav-icon">🎬</span>
-                <a href = 'ListPage' style="text-decoration:none; color:inherit;">电影大厅</a>
+                <a href = "{{ url_for('create.ListPage') }}" style="text-decoration:none; color:inherit;">电影大厅</a>
             </div>
             <div class="nav-item">
                 <span class="nav-icon">⭐</span>

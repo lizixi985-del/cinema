@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ movie.title }} - 电影详情</title>
+    <style>
+        .movie-main { display: flex; gap: 20px; margin: 20px; }
+        .movie-main img { width: 300px; border-radius: 8px; }
+        .movie-info { flex: 1; }
+        .movie-recommend { margin: 40px 20px; }
+        .recommend-list { display: flex; gap: 15px; flex-wrap: wrap; }
+        .recommend-item { width: 150px; text-align: center; }
+        .recommend-item img { width: 100%; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <!-- 电影主信息区 -->
+    <div class="movie-main">
+        <img src="{{ movie.img }}" alt="{{ movie.title }}">
+        <div class="movie-info">
+            <h1>{{ movie.title }}</h1>
+            <p>上映日期：{{ movie.publicdate }} | 评分：{{ movie.score }} | 评论数：{{ movie.com_count }}</p>
+            <p>地区：{{ movie.region }} | 类型：{{ movie.type }}</p>
+            <p>主演：{{ movie.actor }}</p>
+            <h3>电影评论</h3>
+            <p>{{ movie.comment }}</p>
+        </div>
+    </div>
+
+    <!-- 同类型推荐区 -->
+    <div class="movie-recommend">
+        <h3>猜你喜欢</h3>
+        <div class="recommend-list">
+            {% for item in recommend_movies %}
+            <a href="/MovieDetail/{{ item[0] }}" class="recommend-item">
+                <img src="/proxy/douban-image?url={{ item[2] }}" alt="{{ item[1] }}">
+                <p>评分：{{ item[3] }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+{% endblock content %}

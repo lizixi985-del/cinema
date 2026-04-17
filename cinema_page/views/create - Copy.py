@@ -226,17 +226,11 @@ def MovieDetail(movie_id):
 def allowed_file(filename):
     """检查文件扩展名是否允许"""
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 @cr.route('/profile', methods=["GET", "POST"])
 def profile(): 
-    # 判断用户是否登录
-    if 'iduserinfo' not in session:
-        flash('请先登录', 'error')
-        return redirect(url_for('create.login'))
-    
     uid = session['iduserinfo'] 
-    
     if request.method == "GET":
         # 查询用户当前信息
         sql = "SELECT username, email, sex, age, avatar FROM userinfo WHERE iduserinfo = %s"
@@ -244,35 +238,29 @@ def profile():
         if not user_info:
             flash('用户信息不存在', 'error')
             return redirect(url_for('create.Homepage'))
-        
-        # 传给模板
-        return render_template('profile.html', user=user_info[0])
-
     if request.method == "POST":
         username = request.form.get('username', '').strip()
         email = request.form.get('email', '').strip()
         sex = request.form.get('gender', '').strip()
-        age_input = request.form.get('age', '').strip()
-        
+        age = request.form.get('age', '').strip()
+        avatar = request.form.get('avatar')
         # ====================== 验证开始 ======================
         # 1. 邮箱格式验证
-        if email:
-            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            if not re.match(email_regex, email):
-                flash('❌ 邮箱格式不正确，请输入正确邮箱', 'error')
-                return redirect(url_for('create.profile'))
+        email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if email and not re.match(email_regex, email):
+            flash('❌ 邮箱格式不正确，请输入正确邮箱', 'error')
+            return redirect(url_for('create.profile'))
 
-        # 2. 年龄验证
+        # 2. 年龄验证（必须是数字 0~120）
         age = None
-        if age_input:
-            if not age_input.isdigit():
+        if age:
+            if not age.isdigit():
                 flash('❌ 年龄必须是纯数字', 'error')
                 return redirect(url_for('create.profile'))
-            age = int(age_input)
+            age = int(age)
             if age < 0 or age > 120:
                 flash('❌ 年龄必须在 0 ~ 120 之间', 'error')
                 return redirect(url_for('create.profile'))
-
         update_fields = []
         update_params = []
 
@@ -285,42 +273,37 @@ def profile():
         if sex:
             update_fields.append("sex = %s")
             update_params.append(sex)
-        if age is not None:
+        if age:
             update_fields.append("age = %s")
             update_params.append(age)
-
-        # ====================== 头像上传处理 ======================
-        avatar_file = request.files.get('avatar')
-        avatar_path = None
-        
-        if avatar_file and avatar_file.filename and allowed_file(avatar_file.filename):
-            # 安全文件名
-            filename = secure_filename(f"{uid}_{avatar_file.filename}")
-            # 保存目录
-            save_dir = os.path.join(current_app.root_path, 'static', 'img')
-            os.makedirs(save_dir, exist_ok=True)
-            # 完整路径
-            file_path = os.path.join(save_dir, filename)
-            # 保存文件
-            avatar_file.save(file_path)
-            # 存入数据库的路径
-            avatar_path = f"/static/img/{filename}"
+        if avatar:
             update_fields.append("avatar = %s")
-            update_params.append(avatar_path)
-
-        # 没有任何修改
+            update_params.append(avatar)
+        avatar_path = None
+        if avatar and allowed_file(avatar.filename):
+            filename = secure_filename(f"{uid}_{avatar.filename}")
+                # 构建保存路径（static/avatar 需提前创建）
+            save_path = os.path.join(current_app.root_path,'static', 'img')
+            os.makedir(save_path,exist_ok = True)
+            file_path = os.path.join(save_path,filename)
+            avatar.save(file_path)
+            #生成相对路径
+            avatar_path = os.path.join('/static/images/',filename)
+            update_fields.append(f"avatar = '{avatar_path}'")
+            
         if not update_fields:
             flash('未修改任何信息', 'warning')
             return redirect(url_for('create.profile'))
 
-        # 拼接 SQL
+        # 拼接SQL，主键用 iduserinfo
         sql = f"UPDATE userinfo SET {', '.join(update_fields)} WHERE iduserinfo = %s"
         update_params.append(uid)
 
         try:
             database.update(sql, update_params)
-            flash('✅ 个人信息修改成功', 'success')
+            flash('个人信息修改成功', 'success')
         except Exception as e:
-            flash(f'❌ 修改失败：{str(e)}', 'error')
+            flash(f'修改失败：{str(e)}', 'error')
 
-        return redirect(url_for('create.profile'))
+        return redirect(url_for('create.profile'))  
+    return render_template()

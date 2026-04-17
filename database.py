@@ -24,9 +24,13 @@ def close():
     cur.close()
     con.close()
 
-def query(sql):
-    con, cur = coon()  # 查询数据库
-    cur.execute(sql)
+def query(sql, params=None):  # 增加 params 参数
+    con, cur = coon()
+    if params:
+        cur.execute(sql, params)  # 有参数就传进去
+    else:
+        cur.execute(sql)
+    
     res = cur.fetchall()
     close()
     return res
