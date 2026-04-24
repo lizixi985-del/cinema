@@ -68,6 +68,7 @@
         <span class="dot" data-index="1"></span>
         <span class="dot" data-index="2"></span>
     </div>
+
 </div>
 
 <!-- 系统信息卡片 -->
@@ -104,6 +105,37 @@
         </div>
     </div>
 </section>
+
+<!-- 系统公告区域 -->
+{% if announcements %}
+<section class="announcements-section" style="margin: 30px 0;">
+    <h2 class="section-title" style="font-size: 20px; margin-bottom: 16px; color: #2c3e50;">📢 系统公告</h2>
+    <div class="announcements-container" style="display: grid; gap: 16px;">
+        {% for ann in announcements %}
+        <div class="announcement-item" style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid
+            {% if ann[2] == 'important' %}#e74c3c
+            {% elif ann[2] == 'event' %}#9c27b0
+            {% else %}#2196f3{% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                <h3 style="font-size: 18px; font-weight: 600; color: #2c3e50; margin: 0;">{{ ann[1] }}</h3>
+                <span style="padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;
+                    {% if ann[2] == 'important' %}background: #fee; color: #e74c3c;
+                    {% elif ann[2] == 'event' %}background: #f3e5f5; color: #9c27b0;
+                    {% else %}background: #e3f2fd; color: #2196f3;{% endif %}">
+                    {% if ann[2] == 'important' %}🔴 重要
+                    {% elif ann[2] == 'event' %}🎉 活动
+                    {% else %}📌 通知{% endif %}
+                </span>
+            </div>
+            <p style="color: #555; line-height: 1.6; margin: 0 0 12px 0;">{{ ann[3] }}</p>
+            <div style="font-size: 13px; color: #999;">
+                <span>📅 {{ ann[4] }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
 
 <!--电影展示-->

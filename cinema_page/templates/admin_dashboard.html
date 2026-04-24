@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员后台</title>
+    <style>
+        .admin-container {
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        .admin-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .admin-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .notice-box {
+            margin-top: 30px;
+            background: #ecf5ff;
+            color: #409eff;
+            border-left: 4px solid #409eff;
+            padding: 16px 18px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-title">管理员后台首页</div>
+        <div class="admin-subtitle">用于查看系统当前核心统计数据</div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">用户总数</div>
+                <div class="stat-value">{{ user_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">管理员数量</div>
+                <div class="stat-value">{{ admin_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">电影总数</div>
+                <div class="stat-value">{{ movie_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">收藏总数</div>
+                <div class="stat-value">{{ collection_count }}</div>
+            </div>
+        <div class="management-section" style="margin-top: 40px;">
+            <h2 style="font-size: 24px; color: #2c3e50; margin-bottom: 20px;">管理功能</h2>
+            <div class="management-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <a href="{{ url_for('create.movie_management') }}" class="management-card" style="text-decoration: none;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">🎬</div>
+                        <div style="font-size: 20px; font-weight: bold;">电影管理</div>
+                        <div style="font-size: 14px; margin-top: 8px; opacity: 0.9;">添加、删除和编辑电影</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('create.password_requests') }}" class="management-card" style="text-decoration: none;">
+                    <div style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">🔑</div>
+                        <div style="font-size: 20px; font-weight: bold;">密码重置请求</div>
+                        <div style="font-size: 14px; margin-top: 8px; opacity: 0.9;">处理用户密码重置请求</div>
+                    </div>
+                </a>
+                <a href="{{ url_for('create.announcement_management') }}" class="management-card" style="text-decoration: none;">
+                    <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">�</div>
+                        <div style="font-size: 20px; font-weight: bold;">公告管理</div>
+                        <div style="font-size: 14px; margin-top: 8px; opacity: 0.9;">发布和管理系统公告</div>
+                    </div>
+                </a>
+                <div class="management-card" style="background: #f5f5f5; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); opacity: 0.6;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👥</div>
+                    <div style="font-size: 20px; font-weight: bold; color: #7f8c8d;">用户管理</div>
+                    <div style="font-size: 14px; margin-top: 8px; color: #95a5a6;">即将推出</div>
+                </div>
+            <!--<div class="management-card" style="background: #f5f5f5; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); opacity: 0.6;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">⭐</div>
+                    <div style="font-size: 20px; font-weight: bold; color: #7f8c8d;">收藏管理</div>
+                    <div style="font-size: 14px; margin-top: 8px; color: #95a5a6;">即将推出</div>
+                </div>-->
+            </div>
+        </div>
+
+        </div>
+
+      <!--  <div class="notice-box">
+            当前已完成管理员入口、管理员身份校验和后台首页。
+        </div>-->
+    </div>
+</body>
+</html>
+{% endblock content %}

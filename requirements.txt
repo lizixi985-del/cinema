@@ -1,0 +1,20 @@
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Database
+PyMySQL==1.1.0
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+
+# HTTP Requests
+requests==2.31.0
+urllib3==2.1.0
+
+# Security
+cryptography==41.0.7
+
+# Additional Flask Extensions (optional but recommended)
+Flask-Session==0.5.0

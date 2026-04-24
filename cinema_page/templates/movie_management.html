@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>电影管理</title>
+    <style>
+        .movie-management-container {
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .movie-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .movie-img {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+        .table-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 16px 0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .page-link,
+        .page-current {
+            min-width: 40px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .page-link {
+            background: white;
+            color: #2c3e50;
+            border: 1px solid #dcdfe6;
+        }
+
+        .page-link:hover {
+            background: #f5f7fa;
+        }
+
+        .page-current {
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="movie-management-container">
+        <div class="page-header">
+            <div class="page-title">电影管理</div>
+            <button class="btn-add" onclick="openAddModal()">➕ 添加电影</button>
+        </div>
+
+        <div class="table-meta">
+            <div>共 {{ total_items }} 部电影</div>
+            <div>第 {{ current_page }} / {{ total_pages }} 页</div>
+        </div>
+
+        <div class="movie-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>封面</th>
+                        <th>电影ID</th>
+                        <th>电影名称</th>
+                        <th>评分</th>
+                        <th>地区</th>
+                        <th>类型</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movie in movies %}
+                    <tr>
+                        <td><img src="{{ movie[5] }}" alt="{{ movie[2] }}" class="movie-img" onerror="this.src='https://via.placeholder.com/60x90?text=No+Image'"></td>
+                        <td>{{ movie[1] }}</td>
+                        <td>{{ movie[2] }}</td>
+                        <td>{{ movie[4] }}</td>
+                        <td>{{ movie[7] }}</td>
+                        <td>{{ movie[8] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('create.delete_movie', movie_id=movie[1], page=current_page) }}" style="display: inline;" onsubmit="return confirm('确定要删除《{{ movie[2] }}》吗？');">
+                                <button type="submit" class="btn-delete">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not movies %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #999;">暂无电影数据</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <a class="page-link" href="{{ url_for('create.movie_management', page=1) }}">首页</a>
+            <a class="page-link" href="{{ url_for('create.movie_management', page=prev_page) }}">上一页</a>
+            <span class="page-current">{{ current_page }}</span>
+            <a class="page-link" href="{{ url_for('create.movie_management', page=next_page) }}">下一页</a>
+            <a class="page-link" href="{{ url_for('create.movie_management', page=total_pages) }}">末页</a>
+        </div>
+    </div>
+
+    <!-- 添加电影模态框 -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddModal()">&times;</span>
+            <div class="modal-header">添加新电影</div>
+            <form method="POST" action="{{ url_for('create.add_movie') }}">
+                <div class="form-group">
+                    <label>电影ID *</label>
+                    <input type="text" name="movie_id" required placeholder="例如: 1292052">
+                </div>
+                <div class="form-group">
+                    <label>电影名称 *</label>
+                    <input type="text" name="movie_title" required placeholder="例如: 肖申克的救赎">
+                </div>
+                <div class="form-group">
+                    <label>上映日期</label>
+                    <input type="text" name="movie_publicdate" placeholder="例如: 1994-09-10">
+                </div>
+                <div class="form-group">
+                    <label>评分</label>
+                    <input type="text" name="movie_score" placeholder="例如: 9.7">
+                </div>
+                <div class="form-group">
+                    <label>封面图片URL</label>
+                    <input type="text" name="movie_img" placeholder="图片链接">
+                </div>
+                <div class="form-group">
+                    <label>主演</label>
+                    <input type="text" name="movie_actor" placeholder="例如: 蒂姆·罗宾斯 摩根·弗里曼">
+                </div>
+                <div class="form-group">
+                    <label>地区</label>
+                    <input type="text" name="movie_region" placeholder="例如: 美国">
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <input type="text" name="movie_type" placeholder="例如: 剧情 犯罪">
+                </div>
+                <div class="form-group">
+                    <label>剧情简介</label>
+                    <textarea name="movie_comment" placeholder="电影简介..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>评论数</label>
+                    <input type="text" name="movie_com_count" placeholder="例如: 1000000">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">取消</button>
+                    <button type="submit" class="btn-submit">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'block';
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('addModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}

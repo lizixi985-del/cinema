@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>公告管理</title>
+    <style>
+        .announcement-container {
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .announcements-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .announcement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .announcement-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .announcement-type {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .type-important {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .type-normal {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+
+        .type-event {
+            background: #f3e5f5;
+            color: #9c27b0;
+        }
+
+        .announcement-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .announcement-meta {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .announcement-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement-container">
+        <div class="page-header">
+            <div class="page-title">公告管理</div>
+            <button class="btn-add" onclick="openAddModal()">➕ 发布公告</button>
+        </div>
+
+        <div class="announcements-grid">
+            {% if announcements %}
+                {% for ann in announcements %}
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <div class="announcement-title">{{ ann[1] }}</div>
+                        <span class="announcement-type type-{{ ann[2] }}">
+                            {% if ann[2] == 'important' %}重要
+                            {% elif ann[2] == 'event' %}活动
+                            {% else %}通知{% endif %}
+                        </span>
+                    </div>
+                    <div class="announcement-content">{{ ann[3] }}</div>
+                    <div class="announcement-footer">
+                        <div class="announcement-meta">
+                            发布时间: {{ ann[4] }}
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="btn-edit" onclick="openEditModal({{ ann[0] }}, '{{ ann[1] }}', '{{ ann[2] }}', '{{ ann[3] }}')">编辑</button>
+                            <form method="POST" action="{{ url_for('create.delete_announcement', announcement_id=ann[0]) }}" style="display: inline;" onsubmit="return confirm('确定要删除这条公告吗？');">
+                                <button type="submit" class="btn-delete">删除</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📢</div>
+                <h3>暂无公告</h3>
+                <p>点击右上角"发布公告"按钮创建第一条公告</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 添加/编辑公告模态框 -->
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header" id="modalTitle">发布公告</div>
+            <form id="announcementForm" method="POST" action="{{ url_for('create.add_announcement') }}">
+                <input type="hidden" name="announcement_id" id="announcementId">
+                <div class="form-group">
+                    <label>公告标题 *</label>
+                    <input type="text" name="title" id="announcementTitle" required placeholder="请输入公告标题">
+                </div>
+                <div class="form-group">
+                    <label>公告类型 *</label>
+                    <select name="type" id="announcementType" required>
+                        <option value="normal">普通通知</option>
+                        <option value="important">重要公告</option>
+                        <option value="event">活动公告</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>公告内容 *</label>
+                    <textarea name="content" id="announcementContent" required placeholder="请输入公告内容..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn-submit">发布</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '发布公告';
+            document.getElementById('announcementForm').action = '{{ url_for("create.add_announcement") }}';
+            document.getElementById('announcementId').value = '';
+            document.getElementById('announcementTitle').value = '';
+            document.getElementById('announcementType').value = 'normal';
+            document.getElementById('announcementContent').value = '';
+            document.getElementById('announcementModal').style.display = 'block';
+        }
+
+        function openEditModal(id, title, type, content) {
+            document.getElementById('modalTitle').textContent = '编辑公告';
+            document.getElementById('announcementForm').action = '{{ url_for("create.edit_announcement") }}';
+            document.getElementById('announcementId').value = id;
+            document.getElementById('announcementTitle').value = title;
+            document.getElementById('announcementType').value = type;
+            document.getElementById('announcementContent').value = content;
+            document.getElementById('announcementModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('announcementModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('announcementModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}

@@ -115,6 +115,24 @@
                     <p>地区：{{ movie.region }} | 类型：{{ movie.type }}</p>
                     <p>主演：{{ movie.actor }}</p>
                 </div>
+                <!-- 收藏按钮 -->
+                {% if session.uid %}
+                <form action="{{ url_for('create.collection', movie_id=movie.movie_id) }}" method="post" style="margin-top: 20px;">
+                    <button type="submit" style="
+                        padding: 10px 20px;
+                        background-color: {{ ' #ff6b6b' if is_collected else '#409eff' }};
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-size: 16px;
+                    ">
+                        {{ '取消收藏' if is_collected else '收藏电影' }}
+                    </button>
+                </form>
+                {% else %}
+                <p style="margin-top: 20px; color: #999;">登录后可以收藏电影</p>
+                {% endif %}
                 <div class="comment-title">剧情简介</div>
                 <div class="comment-content">{{ movie.comment }}</div>
             </div>
